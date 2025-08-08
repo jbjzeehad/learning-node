@@ -30,12 +30,7 @@ const server = http.createServer((req, res) => {
 
     req.on("end", () => {
       console.log(data);
-      //   const todo = JSON.parse(data);
       const { title, body } = JSON.parse(data);
-
-      //   console.log(todo);
-
-      //   console.log({ title, body });
 
       const createdAt = new Date().toLocaleString();
 
@@ -50,29 +45,24 @@ const server = http.createServer((req, res) => {
       });
 
       res.end(JSON.stringify({ title, body, createdAt }, null, 2));
-
-      //   console.log(allTodos);
     });
-
-    // res.end("Todo Created");
   }
 
   //   GET a Todo
   else if (pathname === "/todo" && req.method === "GET") {
-    // console.log(pathname, "single todo");
-
     const title = url.searchParams.get("title");
 
     console.log(title);
 
     const data = fs.readFileSync(filePath, { encoding: "utf-8" });
+    const parseData = JSON.parse(data);
+    const todo = parseData.find((todo) => todo.title === title);
+    const stringifiedTodo = JSON.stringify(todo);
 
-    // res.writeHead(200, {
-    //   "content-type": "application/json",
-    // });
-    // res.end(data);
-
-    res.end("Single Todo");
+    res.writeHead(200, {
+      "content-type": "application/json",
+    });
+    res.end(stringifiedTodo);
   } else {
     res.end("Route Not Found");
   }
@@ -81,10 +71,3 @@ const server = http.createServer((req, res) => {
 server.listen(5000, "127.0.0.1", () => {
   console.log("Server listening to port 5000");
 });
-
-/**
- * /todos - GET - All Todo
- * /todos/creat-todo - POST - Create Todo
- *
- *
- */
